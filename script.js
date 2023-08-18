@@ -1,44 +1,94 @@
 const guessForm = document.querySelector("#guess")
 const bttn = document.querySelector(".submit")
 const previous = document.querySelector(".previous-guesses")
-const MIN = 1
-const MAX = 100
+const winOrWrong = document.querySelector(".win-or-wrong")
+const lastGuess = document.querySelector(".last-guess")
+const newGame = document.querySelector(".new-game")
 let count = 10 
 
+let randomNumber = Math.floor(Math.random() * 100) + 1;
 
-function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min
-}
+bttn.addEventListener("click", game)
 
-bttn.addEventListener("click", function(){
+
+function game() {
+    guessForm.disabled = false
+    bttn.disabled = false
+    if (count === 10)
+        previous.innerHTML = "Previous guesses: "
     let guess = Number(guessForm.value)
-    let randomNumber = getRandomArbitrary(MIN, MAX)
-    let guessText = document.createElement("p")
-    guessText.innerHTML = "Previous guesses:"
-    let winOrLose = document.createElement("p")
-    if (guessForm.value.length !== 0) {
-        if (count > 0 ) {
+    //if (guessForm.value.length !== 0) {
+        if (count > 1 ) {
             if (guess === randomNumber) {
-                winOrLose.innerHTML += "You Winnnn very fastttt!!"
+                winOrWrong.innerHTML = "Congratulations! You got it right!"
+                previous.innerHTML += `${guess} `
+                winOrWrong.style.background = "green"
+                let newGameBttnWin = document.createElement("button")
+                newGameBttnWin.textContent = "Start new game"
+                newGameBttnWin.classList.add("new-game-button")
+                newGameBttnWin.addEventListener("click", function(){
+                    count = 10
+                    game()
+                    newGame.removeChild(newGameBttnWin)
+                    previous.innerHTML = ""
+                    winOrWrong.innerHTML = ""
+                    lastGuess.innerHTML = ""
+                    winOrWrong.style.background = "none"
+                })
+                newGame.appendChild(newGameBttnWin)
+                randomNumber = Math.floor(Math.random() * 100) + 1;
+                guessForm.disabled = true
+                bttn.disabled = true
                 
             }
-            else {
-                winOrLose.innerHTML += "Wrong!"
+            else if(guess > randomNumber){
+                previous.innerHTML += `${guess} `
+                winOrWrong.innerHTML = "Wrong!"
+                lastGuess.innerHTML = "Last guess was too high!"
+                winOrWrong.style.background = "red"
+                count--
+            } else {
+                previous.innerHTML += `${guess} `
+                winOrWrong.innerHTML = "Wrong!"
+                lastGuess.innerHTML = "Last guess was too low!"
+                winOrWrong.style.background = "red"
                 count--
             }
             
         }
         else {
-            winOrLose.innerHTML += "!!!GAME OVER!!!"
-            
+            previous.innerHTML += `${guess} `
+            winOrWrong.innerHTML = "!!!GAME OVER!!!"
+            winOrWrong.style.background = "red"
+            let newGameBttn = document.createElement("button")
+            newGameBttn.textContent = "Start new game"
+            newGameBttn.classList.add("new-game-button")
+            newGameBttn.addEventListener("click", function(){
+                count = 10
+                game()
+                newGame.removeChild(newGameBttn)
+                previous.innerHTML = ""
+                winOrWrong.innerHTML = ""
+                lastGuess.innerHTML = ""
+                winOrWrong.style.background = "none"
+            })
+            newGame.appendChild(newGameBttn)
+            randomNumber = Math.floor(Math.random() * 100) + 1;
+            guessForm.disabled = true
+            bttn.disabled = true
+
+        
         }
     guessForm.value = ""
-    document.body.appendChild(guessText)
-    document.body.appendChild(winOrLose)
-    }
-    else {
-        alert("ERROR: Invalid input")
-    }
-})
+    guessForm.focus()
+
+    //}
+    //else {
+        //alert("ERROR: Invalid input")
+    //}
+    
+}
+
+
 
 
